@@ -1,0 +1,29 @@
+### Base URL
+@baseUrl = https://be-astro.ikhsanheriyawan2404.workers.dev
+
+### Get Home
+GET {{baseUrl}}/
+
+### Get All Users
+GET {{baseUrl}}/users
+
+### Create User
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "telegram_id": "123456789"
+}
+
+### Create Another User
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "telegram_id": "987654321"
+}
+
+### Delete User (ganti 1 dengan id user yang mau dihapus)
+DELETE {{baseUrl}}/users/1

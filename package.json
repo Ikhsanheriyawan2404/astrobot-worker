@@ -1,0 +1,18 @@
+{
+  "name": "be-astro",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create be-astro-db",
+    "db:migrate:local": "wrangler d1 execute be-astro-db --local --file=./migrations/0001_init.sql",
+    "db:migrate:remote": "wrangler d1 execute be-astro-db --remote --file=./migrations/0001_init.sql"
+  },
+  "dependencies": {
+    "hono": "^4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "wrangler": "^4"
+  }
+}
