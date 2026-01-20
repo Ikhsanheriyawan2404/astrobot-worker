@@ -1,5 +1,5 @@
 ### Base URL
-@baseUrl = https://be-astro.ikhsanheriyawan2404.workers.dev
+@baseUrl = http://localhost:8787
 
 ### Get Home
 GET {{baseUrl}}/
@@ -27,3 +27,7 @@ Content-Type: application/json
 
 ### Delete User (ganti 1 dengan id user yang mau dihapus)
 DELETE {{baseUrl}}/users/1
+
+
+### setup Telegram Webhook (panggil sekali untuk register ke Telegram)
+GET {{baseUrl}}/bot/setup

@@ -1,11 +1,9 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-
-type Env = {
-  Bindings: {
-    DB: D1Database;
-  };
-};
+import type { Env } from "./types";
+import api from "./api";
+import { handleUpdate, type TelegramUpdate } from "./bot";
+import { setWebhook } from "./bot/telegram";
 
 const app = new Hono<Env>();
 
@@ -13,44 +11,25 @@ app.use("*", cors());
 
 app.get("/", (c) => c.json({ message: "Brogrammer API", status: "OK" }));
 
-app.get("/users", async (c) => {
-  const { results } = await c.env.DB.prepare("SELECT * FROM users ORDER BY created_at DESC").all();
-  return c.json(results);
+app.route("/api", api);
+
+app.post("/bot/webhook", async (c) => {
+  const update = await c.req.json<TelegramUpdate>();
+  await handleUpdate(update, c.env);
+  return c.json({ ok: true });
 });
 
-app.post("/users", async (c) => {
-  const { name, telegram_id } = await c.req.json();
-
-  if (!name || !telegram_id) {
-    return c.json({ error: "name dan telegram_id wajib diisi" }, 400);
+app.get("/bot/setup", async (c) => {
+  const provided = c.req.header("x-setup-secret") || "";
+  const secret = c.env.SETUP_SECRET;
+  if (!secret || provided !== secret) {
+    return c.json({ error: "unauthorized" }, 401);
   }
 
-  try {
-    const result = await c.env.DB.prepare(
-      "INSERT INTO users (name, telegram_id) VALUES (?, ?) RETURNING *"
-    )
-      .bind(name, telegram_id)
-      .first();
-
-    return c.json(result, 201);
-  } catch (e: any) {
-    if (e.message?.includes("UNIQUE")) {
-      return c.json({ error: "telegram_id sudah terdaftar" }, 409);
-    }
-    return c.json({ error: "Gagal membuat user" }, 500);
-  }
-});
-
-app.delete("/users/:id", async (c) => {
-  const id = c.req.param("id");
-
-  const user = await c.env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(id).first();
-  if (!user) {
-    return c.json({ error: "User tidak ditemukan" }, 404);
-  }
-
-  await c.env.DB.prepare("DELETE FROM users WHERE id = ?").bind(id).run();
-  return c.json({ message: "User berhasil dihapus" });
+  const url = new URL(c.req.url);
+  const webhookUrl = `${url.origin}/bot/webhook`;
+  const result = await setWebhook(c.env.TELEGRAM_TOKEN, webhookUrl);
+  return c.json({ webhookUrl, result });
 });
 
 export default app;
