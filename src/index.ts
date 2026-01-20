@@ -13,13 +13,13 @@ app.get("/", (c) => c.json({ message: "Brogrammer API", status: "OK" }));
 
 app.route("/api", api);
 
-app.post("/bot/webhook", async (c) => {
+app.post("/api/bot/webhook", async (c) => {
   const update = await c.req.json<TelegramUpdate>();
   await handleUpdate(update, c.env);
   return c.json({ ok: true });
 });
 
-app.get("/bot/setup", async (c) => {
+app.get("/api/bot/setup", async (c) => {
   const provided = c.req.header("x-setup-secret") || "";
   const secret = c.env.SETUP_SECRET;
   if (!secret || provided !== secret) {
