@@ -5,4 +5,12 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "astro"
-database_id = "30217c77-1583-4851-ad50-f831a51b2df7"
+database_id = "anu"
+
+[vars]
+TELEGRAM_TOKEN = ""
+OPENAI_API_KEY = ""
+WEATHER_API_BASE_URL = ""
+PRAYER_API_BASE_URL = ""
+SETUP_SECRET = ""
+FRONTEND_URL = ""

@@ -4,30 +4,7 @@
 ### Get Home
 GET {{baseUrl}}/
 
-### Get All Users
-GET {{baseUrl}}/users
-
-### Create User
-POST {{baseUrl}}/users
+### Get User Info
+GET {{baseUrl}}/api/users/me
 Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "telegram_id": "123456789"
-}
-
-### Create Another User
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-  "name": "Jane Doe",
-  "telegram_id": "987654321"
-}
-
-### Delete User (ganti 1 dengan id user yang mau dihapus)
-DELETE {{baseUrl}}/users/1
-
-
-### setup Telegram Webhook (panggil sekali untuk register ke Telegram)
-GET {{baseUrl}}/bot/setup
+Authorization: Bearer misalkan_anu

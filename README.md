@@ -33,21 +33,5 @@ bun run deploy
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /users | List semua users |
-| POST | /users | Tambah user baru |
-| DELETE | /users/:id | Hapus user |
-
-### Contoh
-
-```bash
-# Tambah user
-curl -X POST http://localhost:8787/users \
-  -H "Content-Type: application/json" \
-  -d '{"name": "John", "telegram_id": "123456"}'
-
-# List users  
-curl http://localhost:8787/users
-
-# Hapus user
-curl -X DELETE http://localhost:8787/users/1
-```
+| GET | / | Health check |
+| GET | /users/me | Ambil data user saat ini (butuh `Authorization: Bearer <api_key>`) |
