@@ -23,11 +23,11 @@ app.get("/api/bot/setup", async (c) => {
   const provided = c.req.header("x-setup-secret") || "";
   const secret = c.env.SETUP_SECRET;
   if (!secret || provided !== secret) {
-    return c.json({ error: "unauthorized" }, 401);
+    return c.json({ error: "Unauthorized" }, 401);
   }
 
   const url = new URL(c.req.url);
-  const webhookUrl = `${url.origin}/bot/webhook`;
+  const webhookUrl = `${url.origin}/api/bot/webhook`;
   const result = await setWebhook(c.env.TELEGRAM_TOKEN, webhookUrl);
   return c.json({ webhookUrl, result });
 });

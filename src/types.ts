@@ -4,7 +4,8 @@ export type Env = {
   Bindings: {
     DB: D1Database;
     TELEGRAM_TOKEN: string;
-    SETUP_SECRET?: string;
+    SETUP_SECRET: string;
+    FRONTEND_URL: string;
   };
 };
 
