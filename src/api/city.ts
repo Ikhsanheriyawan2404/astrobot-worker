@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import type { Env } from "../types";
 import { error, success } from "../utils/response";
 import data from "../../data/city.json";
+import { requireAuth } from "../middleware/auth";
+import { notificationQueries } from "../db/notifications";
 
 const city = new Hono<Env>();
 
@@ -29,6 +31,25 @@ city.get("/", async (c) => {
   });
 
   return c.json(success(results, "Search results"));
+});
+
+city.post("/", requireAuth, async (c) => {
+  const user = (c as any).user;
+  if (!user) return c.json({ error: "User not found" }, 404);
+
+  let body: any;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Invalid JSON body" }, 400);
+  }
+
+  const code = body && (body.code || body.id || body.code_id);
+  if (!code) return c.json({ error: "Field 'code' is required" }, 400);
+
+  await notificationQueries.setPrayerCityCode(c.env.DB, user.telegram_id, String(code));
+
+  return c.json(success({ code: String(code) }, "Prayer city code saved"));
 });
 
 export default city;
