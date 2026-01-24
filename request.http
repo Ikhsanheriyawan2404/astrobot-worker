@@ -53,3 +53,39 @@ Content-Type: application/json
 ### Get City Info
 GET {{baseUrl}}/api/city?q=Cirebon
 Content-Type: application/json
+
+### Update weather location
+POST {{baseUrl}}/api/region
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+	"code": "32.01.16.2003"
+}
+
+### Update prayer location
+POST {{baseUrl}}/api/city
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+	"code": "32.01.16.2003"
+}
+
+### Get User Settings
+GET {{baseUrl}}/api/settings
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+### Update User Settings (example)
+PUT {{baseUrl}}/api/settings
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+	"motivation": { "enabled": true, "time": "06:30" },
+	"todo": { "enabled": true, "time": "07:00" },
+	"weather": { "enabled": false, "time": "06:00", "code": "32.09.37.2007" },
+	"prayer": { "enabled": true, "code": "kontol" },
+	"timezone": "Asia/Jakarta"
+}

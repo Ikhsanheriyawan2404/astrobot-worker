@@ -1,4 +1,10 @@
 export const notificationQueries = {
+  getSettings: (db: D1Database, userId: string) =>
+    db
+      .prepare("SELECT * FROM user_notifications WHERE user_id = ?")
+      .bind(userId)
+      .first(),
+
   upsertForUser: async (db: D1Database, userId: string, fields: Record<string, any>) => {
     const cols = Object.keys(fields);
     if (cols.length === 0) return;
@@ -14,6 +20,9 @@ export const notificationQueries = {
     const params: any[] = [userId, ...cols.map((c) => fields[c])];
     return db.prepare(sql).bind(...params).run();
   },
+
+  updateSettings: (db: D1Database, userId: string, fields: Record<string, any>) =>
+    notificationQueries.upsertForUser(db, userId, fields),
 
   setPrayerCityCode: (db: D1Database, userId: string, code: string) =>
     notificationQueries.upsertForUser(db, userId, { prayer_city_code: code }),
