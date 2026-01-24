@@ -40,3 +40,11 @@ Authorization: Bearer ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6
 {
 	"check": true
 }
+
+### Get Region Info
+GET {{baseUrl}}/api/region?name=Kempek
+Content-Type: application/json
+
+### Get City Info
+GET {{baseUrl}}/api/city?name=Cirebon
+Content-Type: application/json
