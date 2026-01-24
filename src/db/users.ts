@@ -8,10 +8,21 @@ export const userQueries = {
   getByTelegramId: (db: D1Database, telegramId: string) => 
     db.prepare("SELECT * FROM users WHERE telegram_id = ?").bind(telegramId).first(),
 
-  create: (db: D1Database, name: string, telegramId: string) =>
-    db.prepare("INSERT INTO users (name, telegram_id) VALUES (?, ?) RETURNING *")
+  create: async (db: D1Database, name: string, telegramId: string) => {
+    await db.prepare("INSERT INTO users (name, telegram_id) VALUES (?, ?)")
       .bind(name, telegramId)
-      .first(),
+      .run();
+
+    await db.prepare("INSERT OR IGNORE INTO user_notifications (user_id) VALUES (?)")
+      .bind(telegramId)
+      .run();
+
+    const user = await db.prepare("SELECT * FROM users WHERE telegram_id = ?")
+      .bind(telegramId)
+      .first();
+
+    return user;
+  },
 
   setApiKey: async (db: D1Database, telegramId: string, apiKey: string, createdAt: string) => {
     await db.prepare("UPDATE users SET api_key = ?, api_key_created_at = ? WHERE telegram_id = ?").bind(apiKey, createdAt, telegramId).run();
