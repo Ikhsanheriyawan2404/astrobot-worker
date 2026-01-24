@@ -3,6 +3,6 @@ export const success = (data: any, message?: string) => ({
   message,
 });
 
-export const error = (message: string, code?: string) => ({
+export const error = (message: string, code?: number) => ({
   error: { message, code },
 });
