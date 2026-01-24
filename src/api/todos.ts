@@ -48,4 +48,12 @@ todos.post("/:id", requireAuth, async (c) => {
   }
 });
 
+todos.delete("/", requireAuth, async (c) => {
+  const user = (c as any).user;
+  if (!user) return c.json({ error: "User not found" }, 404);
+
+  const res = await todoQueries.deleteAllMyTodos(c.env.DB, user.telegram_id);
+  return c.json(success(res, "All todos deleted successfully"));
+});
+
 export default todos;

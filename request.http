@@ -35,16 +35,21 @@ Authorization: Bearer {{apiKey}}
 ### Todos - Toggle Check (soft-delete)
 POST {{baseUrl}}/api/todos/3
 Content-Type: application/json
-Authorization: Bearer ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6
+Authorization: Bearer {{apiKey}}
 
 {
 	"check": true
 }
 
+### Todos - Delete all todo
+DELETE {{baseUrl}}/api/todos
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
 ### Get Region Info
-GET {{baseUrl}}/api/region?name=Kempek
+GET {{baseUrl}}/api/region?q=Kempek
 Content-Type: application/json
 
 ### Get City Info
-GET {{baseUrl}}/api/city?name=Cirebon
+GET {{baseUrl}}/api/city?q=Cirebon
 Content-Type: application/json

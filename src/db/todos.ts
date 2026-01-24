@@ -46,5 +46,8 @@ export const todoQueries = {
     db.prepare("UPDATE todos SET deleted_at = NULL WHERE id = ? AND user_id = ? RETURNING *")
       .bind(id, userId)
       .first(),
+
+  deleteAllMyTodos: (db: D1Database, userId: string) =>
+    db.prepare("DELETE FROM todos WHERE user_id = ?").bind(userId).run(),
 };
   
