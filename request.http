@@ -1,5 +1,6 @@
 ### Base URL
 @baseUrl = http://localhost:8787
+@apiKey = ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6
 
 ### Get Home
 GET {{baseUrl}}/
@@ -7,4 +8,35 @@ GET {{baseUrl}}/
 ### Get User Info
 GET {{baseUrl}}/api/users/me
 Content-Type: application/json
-Authorization: Bearer misalkan_anu
+Authorization: Bearer {{apiKey}}
+
+### Todos - List
+GET {{baseUrl}}/api/todos
+Authorization: Bearer {{apiKey}}
+
+### Todos - Create
+POST {{baseUrl}}/api/todos
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+	"title": "Belajar Hono"
+}
+
+### Todos - Update
+PUT {{baseUrl}}/api/todos/1
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+	"title": "Belajar Hono - update"
+}
+
+### Todos - Toggle Check (soft-delete)
+POST {{baseUrl}}/api/todos/3
+Content-Type: application/json
+Authorization: Bearer ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6
+
+{
+	"check": true
+}

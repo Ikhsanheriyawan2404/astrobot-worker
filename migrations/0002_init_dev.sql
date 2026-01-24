@@ -21,3 +21,16 @@ CREATE TABLE IF NOT EXISTS todos (
 
 -- Optional index user_id
 CREATE INDEX IF NOT EXISTS idx_todos_user_id ON todos(user_id);
+
+INSERT INTO users (
+  name,
+  telegram_id,
+  api_key,
+  api_key_created_at
+) VALUES (
+  'Ikhsan',
+  '123456789',
+  'ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6',
+  CURRENT_TIMESTAMP
+);
+
