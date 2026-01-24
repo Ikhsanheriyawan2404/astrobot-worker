@@ -51,7 +51,7 @@ settings.get("/", requireAuth, async (c) => {
   const existing = await notificationQueries.getSettings(c.env.DB, user.telegram_id);
   const merged = { ...DEFAULT_SETTINGS, ...(existing || {}) };
 
-  return c.json(success(formatResponse(merged), "Settings fetched"));
+  return success(c, formatResponse(merged), "Settings fetched");
 });
 
 settings.put("/", requireAuth, async (c) => {
@@ -61,7 +61,7 @@ settings.put("/", requireAuth, async (c) => {
   try {
     body = await c.req.json();
   } catch {
-    return c.json(error("Invalid JSON body"), 400);
+    return error(c,"Invalid JSON body", 400);
   }
 
   const updates: Record<string, any> = {};
@@ -72,7 +72,7 @@ settings.put("/", requireAuth, async (c) => {
     }
     if (body.motivation.time !== undefined) {
       const normalized = normalizeTime(body.motivation.time);
-      if (!normalized) return c.json(error("motivation.time must be HH:MM"), 400);
+      if (!normalized) return error(c,"motivation.time must be HH:MM", 400);
       updates.reminder_motivation_time = normalized;
     }
   }
@@ -83,7 +83,7 @@ settings.put("/", requireAuth, async (c) => {
     }
     if (body.todo.time !== undefined) {
       const normalized = normalizeTime(body.todo.time);
-      if (!normalized) return c.json(error("todo.time must be HH:MM"), 400);
+      if (!normalized) return error(c,"todo.time must be HH:MM", 400);
       updates.reminder_todo_time = normalized;
     }
   }
@@ -94,7 +94,7 @@ settings.put("/", requireAuth, async (c) => {
     }
     if (body.weather.time !== undefined) {
       const normalized = normalizeTime(body.weather.time);
-      if (!normalized) return c.json(error("weather.time must be HH:MM"), 400);
+      if (!normalized) return error(c,"weather.time must be HH:MM", 400);
       updates.reminder_weather_time = normalized;
     }
     if (body.weather.code !== undefined) {
@@ -116,14 +116,14 @@ settings.put("/", requireAuth, async (c) => {
   }
 
   if (Object.keys(updates).length === 0) {
-    return c.json(error("No valid fields to update"), 400);
+    return error(c,"No valid fields to update", 400);
   }
 
   await notificationQueries.updateSettings(c.env.DB, user.telegram_id, updates);
   const latest = await notificationQueries.getSettings(c.env.DB, user.telegram_id);
   const merged = { ...DEFAULT_SETTINGS, ...(latest || {}) };
 
-  return c.json(success(formatResponse(merged), "Settings updated"));
+  return success(c, formatResponse(merged), "Settings updated");
 });
 
 export default settings;

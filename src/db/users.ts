@@ -36,4 +36,32 @@ export const userQueries = {
 
   delete: (db: D1Database, id: string) =>
     db.prepare("DELETE FROM users WHERE id = ?").bind(id).run(),
+  
+  getAllUserPreferences: async (db: D1Database) => {
+    return db
+      .prepare(`
+        SELECT
+          u.name,
+          u.telegram_id,
+
+          un.enable_weather,
+          un.weather_adm4,
+          un.reminder_weather_time,
+
+          un.enable_prayer,
+          un.prayer_city_code,
+
+          un.enable_motivation,
+          un.reminder_motivation_time,
+
+          un.enable_todo_reminder,
+          un.reminder_todo_time
+        FROM users u
+        LEFT JOIN user_notifications un
+          ON un.user_id = u.telegram_id
+        ORDER BY u.created_at DESC
+      `)
+      .all();
+  },
+  
 };

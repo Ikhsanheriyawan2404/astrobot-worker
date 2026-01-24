@@ -12,7 +12,7 @@ region.get("/", async (c) => {
   const qStr = String(q).trim().toLowerCase();
 
   if (!qStr) {
-    return c.json(error("Query parameter '?q' or '?name' is required."));
+    return error(c, "Query parameter '?q' or '?name' is required.", 400);
   }
   
   const terms = qStr.split(/\s+/);
@@ -52,26 +52,26 @@ region.get("/", async (c) => {
     };
   });
 
-  return c.json(success(results, "Search results"));
+  return success(c, results, "Search results");
 });
 
 region.post("/", requireAuth, async (c) => {
   const user = (c as any).user;
-  if (!user) return c.json({ error: "User not found" }, 404);
+  if (!user) return error(c, "User not found", 404);
 
   let body: any;
   try {
     body = await c.req.json();
   } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
+    return error(c, "Invalid JSON body", 400);
   }
 
   const code = body && (body.code || body.id || body.code_id);
-  if (!code) return c.json({ error: "Field 'code' is required" }, 400);
+  if (!code) return error(c, "Field 'code' is required", 400);
 
   await notificationQueries.setWeatherAdm4(c.env.DB, user.telegram_id, String(code));
 
-  return c.json(success({ code: String(code) }, "Weather adm4 saved"));
+  return success(c, { code: String(code) }, "Weather adm4 saved");
 });
 
 export default region;

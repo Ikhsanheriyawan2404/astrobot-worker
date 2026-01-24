@@ -10,7 +10,7 @@ users.get("/me", requireAuth, async (c) => {
   if (!user) return c.json({ error: "User tidak ditemukan" }, 404);
 
   const { api_key, ...safeUser } = user as any;
-  return c.json(success(safeUser, "User fetched successfully"));
+  return success(c, safeUser, "User fetched successfully");
 });
 
 export default users;

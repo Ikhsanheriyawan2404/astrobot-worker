@@ -86,6 +86,15 @@ Authorization: Bearer {{apiKey}}
 	"motivation": { "enabled": true, "time": "06:30" },
 	"todo": { "enabled": true, "time": "07:00" },
 	"weather": { "enabled": false, "time": "06:00", "code": "32.09.37.2007" },
-	"prayer": { "enabled": true, "code": "kontol" },
+	"prayer": { "enabled": true, "code": "test" },
 	"timezone": "Asia/Jakarta"
 }
+
+### Get Daily Weather
+@code = "32.09.37.2007"
+GET https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={{code}}
+
+### Get Daily Prayer Times
+GET https://api.myquran.com/v3/sholat/jadwal/{{code}}/today?tz=Asia%2FJakarta
+
+
