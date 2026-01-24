@@ -55,6 +55,25 @@ region.get("/", async (c) => {
   return success(c, results, "Search results");
 });
 
+
+region.get("/:code", async (c) => {
+  const code = c.req.param("code");
+  if (!code) return error(c, "Code parameter is required", 400);
+
+  const mapByCode = new Map<string, any>();
+  (data as Array<any>).forEach((item) => {
+    if (item.kode) mapByCode.set(String(item.kode), item);
+  });
+
+  const item = mapByCode.get(String(code));
+  if (!item) return error(c, "Region not found", 404);
+
+  return success(c, {
+    code: item.kode,
+    name: item.nama,
+  }, "Region detail");
+});
+
 region.post("/", requireAuth, async (c) => {
   const user = (c as any).user;
   if (!user) return error(c, "User not found", 404);

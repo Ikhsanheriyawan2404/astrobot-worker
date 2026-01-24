@@ -33,6 +33,19 @@ city.get("/", async (c) => {
   return success(c, results, "Search results");
 });
 
+city.get("/:code", async (c) => {
+  const code = c.req.param("code");
+  if (!code) return error(c, "Code parameter is required", 400);
+
+  const item = (data as Array<any>).find((it) => String(it.id) === String(code));
+  if (!item) return error(c, "City not found", 404);
+
+  return success(c, {
+    code: item.id,
+    name: item.lokasi,
+  }, "City detail");
+});
+
 city.post("/", requireAuth, async (c) => {
   const user = (c as any).user;
   if (!user) return error(c, "User not found", 404);

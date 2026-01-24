@@ -80,7 +80,7 @@ INSERT INTO user_notifications (
   1, -- todo reminder ON
   1, -- motivation ON
   NULL,
-  '32.09.37.2007',
+  NULL,
   '07:00',
   '06:00',
   '06:30',
