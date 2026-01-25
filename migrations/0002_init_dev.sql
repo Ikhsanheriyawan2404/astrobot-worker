@@ -75,10 +75,49 @@ INSERT INTO user_notifications (
   timezone
 ) VALUES (
   '123456789',
-  0, -- weather off
-  0, -- prayer off
+  1, -- weather off
+  1, -- prayer off
   1, -- todo reminder ON
   1, -- motivation ON
+  "3636638817772e42b59d74cff571fbb3",
+  "32.09.37.2007",
+  '07:00',
+  '06:00',
+  '06:30',
+  'Asia/Jakarta'
+);
+
+INSERT INTO users (
+  name,
+  telegram_id,
+  api_key,
+  api_key_created_at
+) VALUES (
+  'Roger',
+  '1131652151',
+  'a1c4b7d2-91ef-4c2a-9b8f-771c8a2f9abc',
+  CURRENT_TIMESTAMP
+);
+
+-- Seed user_notifications
+INSERT INTO user_notifications (
+  user_id,
+  enable_weather,
+  enable_prayer,
+  enable_todo_reminder,
+  enable_motivation,
+  prayer_city_code,
+  weather_adm4,
+  reminder_todo_time,
+  reminder_weather_time,
+  reminder_motivation_time,
+  timezone
+) VALUES (
+  '1131652151',
+  0, -- weather ON
+  0, -- prayer ON
+  1, -- todo reminder ON
+  1, -- motivation OFF
   NULL,
   NULL,
   '07:00',
@@ -86,4 +125,5 @@ INSERT INTO user_notifications (
   '06:30',
   'Asia/Jakarta'
 );
+
 

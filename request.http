@@ -54,6 +54,14 @@ Content-Type: application/json
 GET {{baseUrl}}/api/city?q=Cirebon
 Content-Type: application/json
 
+### Get Region Code
+GET {{baseUrl}}/api/region/11.01.01.2001
+Content-Type: application/json
+
+### Get City Code
+GET {{baseUrl}}/api/city/eccbc87e4b5ce2fe28308fd9f2a7baf3
+Content-Type: application/json
+
 ### Update weather location
 POST {{baseUrl}}/api/region
 Content-Type: application/json
@@ -96,5 +104,4 @@ GET https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={{code}}
 
 ### Get Daily Prayer Times
 GET https://api.myquran.com/v3/sholat/jadwal/{{code}}/today?tz=Asia%2FJakarta
-
 

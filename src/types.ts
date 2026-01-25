@@ -6,6 +6,8 @@ export type Env = {
     TELEGRAM_TOKEN: string;
     SETUP_SECRET: string;
     FRONTEND_URL: string;
+    WEATHER_API_BASE_URL: string;
+    PRAYER_API_BASE_URL: string;
   };
 };
 

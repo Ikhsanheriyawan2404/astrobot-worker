@@ -6,6 +6,7 @@ import { handleUpdate, type TelegramUpdate } from "./bot";
 import { setWebhook } from "./bot/telegram";
 import { success } from "./utils/response";
 import { userQueries } from "./db/users";
+import { buildUrl } from "./utils/helper";
 
 const app = new Hono<Env>();
 
@@ -47,16 +48,18 @@ app.get("/api/bot/data", async (c) => {
     return rows.map((r) => {
       const preferences: Record<string, any> = {};
 
-      if (r.enable_weather) {
+      if (r.enable_weather && r.weather_adm4) {
         preferences.weather = {
           code: r.weather_adm4,
           time: r.reminder_weather_time,
+          url: buildUrl(c.env.WEATHER_API_BASE_URL, r.weather_adm4),
         };
       }
 
-      if (r.enable_prayer) {
+      if (r.enable_prayer && r.prayer_city_code) {
         preferences.prayer = {
           code: r.prayer_city_code,
+          url: buildUrl(c.env.PRAYER_API_BASE_URL, r.prayer_city_code),
         };
       }
 
