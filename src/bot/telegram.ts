@@ -26,6 +26,18 @@ export async function sendMessageWithButton(token: string, chatId: number, text:
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [[{ text: buttonText, url: buttonUrl }]],
+        keyboard: [
+          [
+            { text: '⚙️ Setting' },
+            { text: '📝 Todos' }
+          ],
+          [
+            { text: '🌤️ Cuaca' },
+            { text: '🕌 Sholat' }
+          ]
+        ],
+        resize_keyboard: true,
+        one_time_keyboard: false,
       },
     }),
   });

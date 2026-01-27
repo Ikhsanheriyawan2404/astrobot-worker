@@ -46,7 +46,7 @@ const commands: Record<string, CommandHandler> = {
     await sendMessageWithButton(
       env.TELEGRAM_TOKEN,
       chatId,
-      `Yo ${name} 👋 Welcome! Klik tombol di bawah buat mulai atur preferensi lu.`,
+      `Yo ${name} 👋 Welcome! Klik tombol di bawah buat mulai atur preferensimu.`,
       "🚀 Go",
       link
     );
