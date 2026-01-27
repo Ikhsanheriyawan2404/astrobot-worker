@@ -26,6 +26,22 @@ export async function sendMessageWithButton(token: string, chatId: number, text:
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [[{ text: buttonText, url: buttonUrl }]],
+      },
+    }),
+  });
+}
+
+export async function sendMessageWithKeyboardButton(token: string, chatId: number, text: string) {
+  const url = `${TELEGRAM_API}${token}/sendMessage`;
+
+  await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: "HTML",
+      reply_markup: {
         keyboard: [
           [
             { text: '⚙️ Setting' },

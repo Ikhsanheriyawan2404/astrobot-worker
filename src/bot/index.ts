@@ -33,12 +33,22 @@ export async function handleUpdate(update: TelegramUpdate, env: Env["Bindings"])
       await handleCommand(text, chatId, message, env);
       return;
     }
-    
-    todoQueries.saveMyTodo(env.DB, String(chatId), text);
-    
-    const textMessage = `Todo-nya udah gw bantu catet ya, bro! ✅`;
+
+    if (text === '⚙️ Setting') {
+      await handleCommand('/settings', chatId, message, env);
+      return;
+    }
+
+    if (text === '📝 Todos') {
+      await handleCommand('/todos', chatId, message, env);
+      return;
+    }
+
+    await todoQueries.saveMyTodo(env.DB, String(chatId), text);
+
+    const textMessage = `Todo-nya udah gw bantu catet ya`;
     const botResponse = `${textMessage}\n<i>${text}</i>`;
-    
+
     await sendMessage(env.TELEGRAM_TOKEN, chatId, botResponse);
   } catch (error) {
     console.error("Error handling update:", error);
