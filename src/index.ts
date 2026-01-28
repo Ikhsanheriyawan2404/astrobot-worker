@@ -70,7 +70,7 @@ app.get("/api/bot/data", async (c) => {
       if (r.enable_motivation) {
         preferences.motivation = {
           time: r.reminder_motivation_time,
-          motivation: motivation,
+          text: motivation,
         };
       }
 
