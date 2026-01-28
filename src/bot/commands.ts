@@ -144,31 +144,21 @@ const commands: Record<string, CommandHandler> = {
         return;
       }
 
-      try {
-        const apiRes: PrayerApiResponse = await callPrayerApi(() => fetchPrayerSchedule(env.PRAYER_API_BASE_URL, prefs.prayer_city_code as string));
+      const apiRes: PrayerApiResponse = await callPrayerApi(() => fetchPrayerSchedule(env.PRAYER_API_BASE_URL, prefs.prayer_city_code as string));
 
-        if (!apiRes || apiRes.status !== true || !apiRes.data) {
-          console.error('Invalid prayer API response', apiRes);
-          await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil jadwal sholat, coba lagi nanti.');
-          return;
-        }
-
-        const data: PrayerData = apiRes.data;
-        console.log({data})
-        const { kabko, prov, jadwal } = data;
-        const dayKey = Object.keys(jadwal || {})[0];
-        const today = jadwal?.[dayKey!] || {};
-
-        const text = buildResponsePrayer(kabko, prov, today, data.id);
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, text);
-      } catch (err: any) {
-        console.error('Error fetching prayer schedule:', err);
-        if (err?.status) {
-          await sendMessage(env.TELEGRAM_TOKEN, chatId, `Gagal ambil jadwal sholat (code ${err.status}).`);
-        } else {
-          await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil jadwal sholat dari API, coba lagi nanti.');
-        }
+      if (!apiRes || apiRes.status !== true || !apiRes.data) {
+        console.error('Invalid prayer API response', apiRes);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil jadwal sholat, coba lagi nanti.');
+        return;
       }
+
+      const data: PrayerData = apiRes.data;
+      const { kabko, prov, jadwal } = data;
+      const dayKey = Object.keys(jadwal || {})[0];
+      const today = jadwal?.[dayKey!] || {};
+
+      const text = buildResponsePrayer(kabko, prov, today);
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, text);
     } catch (err) {
       console.error('Error in /sholat handler:', err);
       await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal cek pengaturan sholat, coba lagi nanti.');

@@ -39,7 +39,6 @@ export const buildResponsePrayer = (
   kabko: string | undefined,
   prov: string | undefined,
   today: any,
-  id?: string
 ) => {
   const lines = [
     `<b>Jadwal Sholat — ${kabko || "-"}, ${prov || "-"}</b>`,
@@ -47,14 +46,11 @@ export const buildResponsePrayer = (
     "",
     `Imsak: ${today?.imsak || "-"}`,
     `Subuh: ${today?.subuh || "-"}`,
-    `Terbit: ${today?.terbit || "-"}`,
-    `Dhuha: ${today?.dhuha || "-"}`,
     `Dzuhur: ${today?.dzuhur || "-"}`,
     `Ashar: ${today?.ashar || "-"}`,
     `Maghrib: ${today?.maghrib || "-"}`,
     `Isya: ${today?.isya || "-"}`,
     "",
-    `ID: ${id || "-"}`,
     `Sumber: myquran.com`
   ];
 
