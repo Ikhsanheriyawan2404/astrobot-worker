@@ -52,6 +52,43 @@ const commands: Record<string, CommandHandler> = {
       link
     );
   },
+  
+  "/cuaca": async (chatId, message, env) => {
+    const tgId = String(message?.from?.id ?? chatId);
+    try {
+      const prefs = await userQueries.getNotificationsByTelegramId(env.DB, tgId);
+      if (!prefs) throw new Error('No preferences found');
+      
+      if (!prefs.weather_adm4) {
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Lokasi untuk cuaca belum diset di Settings. Silakan pilih lokasi dulu.');
+        return;
+      }
+
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, `Cuaca handler siap, tapi fetching belum diimplementasi. Kota kode: ${prefs.weather_adm4}`);
+    } catch (err) {
+      console.error('Error in /cuaca handler:', err);
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal cek pengaturan cuaca, coba lagi nanti.');
+    }
+  },
+
+  "/sholat": async (chatId, message, env) => {
+    const tgId = String(message?.from?.id ?? chatId);
+    try {
+      const prefs = await userQueries.getNotificationsByTelegramId(env.DB, tgId);
+      
+      if (!prefs) throw new Error('No preferences found');
+
+      if (!prefs.prayer_city_code) {
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Lokasi sholat belum diset di Settings. Silakan pilih kota untuk waktu sholat.');
+        return;
+      }
+
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, `Sholat handler siap, tapi belum fetch jadwal. City code: ${prefs.prayer_city_code}`);
+    } catch (err) {
+      console.error('Error in /sholat handler:', err);
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal cek pengaturan sholat, coba lagi nanti.');
+    }
+  },
 
   "/todos": async (chatId, _message, env) => {
     const tgId = String(chatId);

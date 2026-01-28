@@ -64,4 +64,7 @@ export const userQueries = {
       .all();
   },
   
+  getNotificationsByTelegramId: (db: D1Database, telegramId: string) =>
+    db.prepare("SELECT * FROM user_notifications WHERE user_id = ?").bind(telegramId).first(),
+  
 };

@@ -43,6 +43,16 @@ export async function handleUpdate(update: TelegramUpdate, env: Env["Bindings"])
       await handleCommand('/todos', chatId, message, env);
       return;
     }
+    
+    if (text === '🌤️ Cuaca') {
+      await handleCommand('/cuaca', chatId, message, env);
+      return;
+    }
+    
+    if (text === '🕌 Sholat') {
+      await handleCommand('/sholat', chatId, message, env);
+      return;
+    }
 
     await todoQueries.saveMyTodo(env.DB, String(chatId), text);
 
