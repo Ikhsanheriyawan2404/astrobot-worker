@@ -9,6 +9,7 @@ import { userQueries } from "./db/users";
 import { buildUrl } from "./utils/helper";
 import { generateDailyMotivation } from "./utils/thirdparty";
 import { motivationQueries } from "./db/motivation";
+import { todoQueries } from "./db/todos";
 
 const app = new Hono<Env>();
 
@@ -45,11 +46,11 @@ app.get("/api/bot/data", async (c) => {
   }
 
   const rows = await userQueries.getAllUserPreferences(c.env.DB);
-  const motivation = await generateDailyMotivation(c.env.OPENAI_API_KEY);
+  const motivation = "test";
   await motivationQueries.saveMotivation(c.env.DB, motivation);
 
   const mapUserPreferences = (rows: any[]) => {
-    return rows.map((r) => {
+    return rows.map(async (r) => {
       const preferences: Record<string, any> = {};
 
       if (r.enable_weather && r.weather_adm4) {
@@ -73,10 +74,12 @@ app.get("/api/bot/data", async (c) => {
           text: motivation,
         };
       }
-
+      
+      const todos = await todoQueries.getMyTodos(c.env.DB, r.telegram_id);
       if (r.enable_todo_reminder) {
         preferences.todo = {
           time: r.reminder_todo_time,
+          data: todos.map((t) => ({ title: t.title })),
         };
       }
 
@@ -88,8 +91,7 @@ app.get("/api/bot/data", async (c) => {
     });
   };
   
-  const data = mapUserPreferences(rows.results || []);
-
+  const data = await Promise.all(mapUserPreferences(rows.results || []));
   return success(c, data, "All user preferences");
 });
 
