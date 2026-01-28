@@ -7,6 +7,8 @@ import { setWebhook } from "./bot/telegram";
 import { success } from "./utils/response";
 import { userQueries } from "./db/users";
 import { buildUrl } from "./utils/helper";
+import { generateDailyMotivation } from "./utils/thirdparty";
+import { motivationQueries } from "./db/motivation";
 
 const app = new Hono<Env>();
 
@@ -43,6 +45,8 @@ app.get("/api/bot/data", async (c) => {
   }
 
   const rows = await userQueries.getAllUserPreferences(c.env.DB);
+  const motivation = await generateDailyMotivation(c.env.OPENAI_API_KEY);
+  await motivationQueries.saveMotivation(c.env.DB, motivation);
 
   const mapUserPreferences = (rows: any[]) => {
     return rows.map((r) => {
@@ -66,6 +70,7 @@ app.get("/api/bot/data", async (c) => {
       if (r.enable_motivation) {
         preferences.motivation = {
           time: r.reminder_motivation_time,
+          motivation: motivation,
         };
       }
 

@@ -1,4 +1,5 @@
 import { buildUrl } from "./helper";
+import OpenAI from "openai";
 
 export class HTTPError extends Error {
   status: number;
@@ -110,4 +111,37 @@ export const fetchWeatherSchedule = async (
   if (!baseUrl) throw new Error("WEATHER_API_BASE_URL not configured");
   const url = buildUrl(baseUrl, adm4Code);
   return fetchJson(url) as Promise<WeatherApiResponse>;
+};
+
+export const generateDailyMotivation = async (apiKey: string): Promise<string> => {
+  if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
+
+  const client = new OpenAI({ apiKey });
+
+  const prompt = `
+Kamu adalah seorang motivator yang ahli dalam membuat satu kalimat motivasi yang kuat, singkat, dan inspiratif.
+
+Instruksi:
+- Buat hanya **1 kalimat motivasi** yang langsung kuat dan to the point.
+- Nada: hangat, percaya diri, positif, dan menyemangati.
+- Jangan fokus hanya pada pagi atau bangun tidur — buat kalimat yang bisa memberi semangat kapan saja.
+- Pastikan setiap output selalu unik dan kreatif dari hari ke hari.
+
+Format output:
+“Kalimat motivasi yang kuat dan unik”
+
+Sekarang buat satu kalimat motivasi yang penuh semangat.`;
+
+  try {
+    const res: any = await client.chat.completions.create({
+      model: "gpt-5-nano",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text = res?.choices?.[0]?.message?.content;
+    if (!text) throw new Error("No response from OpenAI");
+    return String(text).trim();
+  } catch (err: any) {
+    throw new Error(`OpenAI error: ${err?.message ?? String(err)}`);
+  }
 };

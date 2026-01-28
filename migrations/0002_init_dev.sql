@@ -48,6 +48,14 @@ CREATE TABLE IF NOT EXISTS user_notifications (
 
 CREATE INDEX IF NOT EXISTS idx_user_notifications_user_id ON user_notifications(user_id);
 
+-- Motivations table: store reusable daily motivation messages
+CREATE TABLE IF NOT EXISTS motivations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message TEXT NOT NULL,
+  language TEXT DEFAULT 'id',
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO users (
   name,
   telegram_id,

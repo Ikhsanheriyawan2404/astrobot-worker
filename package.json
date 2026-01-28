@@ -10,7 +10,8 @@
     "db:migrate:remote": "wrangler d1 execute astro --remote --file=./migrations/0001_init.sql"
   },
   "dependencies": {
-    "hono": "^4"
+    "hono": "^4",
+    "openai": "^6.16.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4",
