@@ -25,3 +25,38 @@ export const buildResponseTodos = (
 
   return text
 }
+
+export const buildResponseWeather = (
+  header: string,
+  segments: string[],
+  source = "data.bmkg.go.id"
+) => {
+  const lines = [header, ...segments, "", `Sumber: BMKG — ${source}`];
+  return lines.join("\n");
+};
+
+export const buildResponsePrayer = (
+  kabko: string | undefined,
+  prov: string | undefined,
+  today: any,
+  id?: string
+) => {
+  const lines = [
+    `<b>Jadwal Sholat — ${kabko || "-"}, ${prov || "-"}</b>`,
+    `${today?.tanggal || "-"}`,
+    "",
+    `Imsak: ${today?.imsak || "-"}`,
+    `Subuh: ${today?.subuh || "-"}`,
+    `Terbit: ${today?.terbit || "-"}`,
+    `Dhuha: ${today?.dhuha || "-"}`,
+    `Dzuhur: ${today?.dzuhur || "-"}`,
+    `Ashar: ${today?.ashar || "-"}`,
+    `Maghrib: ${today?.maghrib || "-"}`,
+    `Isya: ${today?.isya || "-"}`,
+    "",
+    `ID: ${id || "-"}`,
+    `Sumber: myquran.com`
+  ];
+
+  return lines.join("\n");
+};

@@ -3,7 +3,9 @@ import { sendMessage, sendMessageWithButton, sendMessageWithKeyboardButton } fro
 import type { TelegramUpdate } from "./index";
 import { userQueries } from "../db/users";
 import { todoQueries } from "../db/todos";
-import { buildResponseTodos } from "../utils/response";
+import { buildResponseTodos, buildResponseWeather, buildResponsePrayer } from "../utils/response";
+import { fetchPrayerSchedule, type PrayerApiResponse, type PrayerData, fetchWeatherSchedule, type WeatherApiResponse, type WeatherDataItem, type WeatherEntry } from "../utils/thirdparty";
+import { callPrayerApi, callWeatherApi } from "../utils/apiQueue";
 
 type CommandHandler = (
   chatId: number,
@@ -64,7 +66,66 @@ const commands: Record<string, CommandHandler> = {
         return;
       }
 
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `Cuaca handler siap, tapi fetching belum diimplementasi. Kota kode: ${prefs.weather_adm4}`);
+      const wRes: WeatherApiResponse = await callWeatherApi(() => fetchWeatherSchedule(env.WEATHER_API_BASE_URL, prefs.weather_adm4 as string));
+
+      if (!wRes || !wRes.data || wRes.data.length === 0) {
+        console.error('Invalid weather API response', wRes);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil data cuaca, coba lagi nanti.');
+        return;
+      }
+
+      const dayItem: WeatherDataItem = wRes.data[0] as WeatherDataItem;
+      const slices = dayItem.cuaca || [];
+      const entries: WeatherEntry[] = ([] as WeatherEntry[]).concat(...slices);
+
+      if (!entries || entries.length === 0) {
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Data cuaca untuk hari ini tidak tersedia.');
+        return;
+      }
+
+      const first = entries[0]!;
+      const datePart = (first.local_datetime || first.datetime || first.utc_datetime || "").toString().split(" ")[0].split("T")[0];
+      let header = datePart || "-";
+      try {
+        if (datePart) {
+          const d = new Date(datePart + 'T00:00:00');
+          header = new Intl.DateTimeFormat('id-ID', { weekday: 'short', day: '2-digit', month: 'short' }).format(d);
+        }
+      } catch (e) { /*ignore formatting errors */ }
+
+      const emojiFor = (desc?: string) => {
+        const s = (desc || '').toLowerCase();
+        if (s.includes('hujan')) return s.includes('ringan') ? '🌦' : '🌧';
+        if (s.includes('cerah') && s.includes('berawan')) return '⛅️';
+        if (s.includes('cerah')) return '☀️';
+        if (s.includes('berawan')) return '☁️';
+        return '🌥';
+      };
+
+      const targetDate = datePart;
+      const dayEntries = entries.filter(e => {
+        const d = (e.local_datetime || e.datetime || e.utc_datetime || '').toString().split(' ')[0].split('T')[0];
+        return d === targetDate;
+      });
+
+      const sourceEntries = (dayEntries && dayEntries.length) ? dayEntries : entries;
+      sourceEntries.sort((a,b) => {
+        const ta = new Date((a.local_datetime || a.datetime || a.utc_datetime || '')).getTime();
+        const tb = new Date((b.local_datetime || b.datetime || b.utc_datetime || '')).getTime();
+        return (ta || 0) - (tb || 0);
+      });
+
+      const segments = sourceEntries.map(e => {
+        const local = (e.local_datetime || e.utc_datetime || e.datetime || '').toString();
+        const timePart = (local.split(' ')[1] || local.split('T')[1] || '').slice(0,5);
+        const timeLabel = timePart ? timePart.replace(':', '.') : '-';
+        const emoji = emojiFor(e.weather_desc || e.weather_desc_en);
+        const temp = (typeof e.t === 'number') ? `${Math.round(e.t)}°C` : '-';
+        return `${timeLabel} ${emoji} ${temp}`;
+      });
+
+      const text = buildResponseWeather(header, segments);
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, text);
     } catch (err) {
       console.error('Error in /cuaca handler:', err);
       await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal cek pengaturan cuaca, coba lagi nanti.');
@@ -83,7 +144,31 @@ const commands: Record<string, CommandHandler> = {
         return;
       }
 
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `Sholat handler siap, tapi belum fetch jadwal. City code: ${prefs.prayer_city_code}`);
+      try {
+        const apiRes: PrayerApiResponse = await callPrayerApi(() => fetchPrayerSchedule(env.PRAYER_API_BASE_URL, prefs.prayer_city_code as string));
+
+        if (!apiRes || apiRes.status !== true || !apiRes.data) {
+          console.error('Invalid prayer API response', apiRes);
+          await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil jadwal sholat, coba lagi nanti.');
+          return;
+        }
+
+        const data: PrayerData = apiRes.data;
+        console.log({data})
+        const { kabko, prov, jadwal } = data;
+        const dayKey = Object.keys(jadwal || {})[0];
+        const today = jadwal?.[dayKey!] || {};
+
+        const text = buildResponsePrayer(kabko, prov, today, data.id);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, text);
+      } catch (err: any) {
+        console.error('Error fetching prayer schedule:', err);
+        if (err?.status) {
+          await sendMessage(env.TELEGRAM_TOKEN, chatId, `Gagal ambil jadwal sholat (code ${err.status}).`);
+        } else {
+          await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal ambil jadwal sholat dari API, coba lagi nanti.');
+        }
+      }
     } catch (err) {
       console.error('Error in /sholat handler:', err);
       await sendMessage(env.TELEGRAM_TOKEN, chatId, 'Gagal cek pengaturan sholat, coba lagi nanti.');
