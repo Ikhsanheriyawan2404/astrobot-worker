@@ -63,7 +63,7 @@ INSERT INTO users (
   api_key_created_at
 ) VALUES (
   'Ikhsan',
-  '123456789',
+  '1131652151',
   'ed58e6fd-8e18-4ee8-8b9c-4340bf3452e6',
   CURRENT_TIMESTAMP
 );
@@ -82,7 +82,7 @@ INSERT INTO user_notifications (
   reminder_motivation_time,
   timezone
 ) VALUES (
-  '123456789',
+  '1131652151',
   1, -- weather off
   1, -- prayer off
   1, -- todo reminder ON
@@ -102,7 +102,7 @@ INSERT INTO users (
   api_key_created_at
 ) VALUES (
   'Roger',
-  '1131652151',
+  '123456789',
   'a1c4b7d2-91ef-4c2a-9b8f-771c8a2f9abc',
   CURRENT_TIMESTAMP
 );
@@ -121,7 +121,7 @@ INSERT INTO user_notifications (
   reminder_motivation_time,
   timezone
 ) VALUES (
-  '1131652151',
+  '123456789',
   0, -- weather ON
   0, -- prayer ON
   1, -- todo reminder ON
