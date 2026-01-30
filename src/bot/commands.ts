@@ -124,7 +124,14 @@ const commands: Record<string, CommandHandler> = {
         return `${timeLabel} ${emoji} ${temp}`;
       });
 
-      const text = buildResponseWeather(header, segments);
+      // Build title + location header similar to prayer response
+      const locationObj = (wRes.lokasi || dayItem.lokasi || {}) as any;
+      const desa = (locationObj.desa || locationObj.kecamatan || locationObj.kotkab || '').toString();
+      const prov = (locationObj.provinsi || '').toString();
+      const title = `<b>Perkiraan Cuaca — ${desa ? desa.toUpperCase() : (locationObj.kotkab || '-').toString()}</b>`;
+      const fullHeader = `${title}\n${header}\n`;
+
+      const text = buildResponseWeather(fullHeader, segments);
       await sendMessage(env.TELEGRAM_TOKEN, chatId, text);
     } catch (err) {
       console.error('Error in /cuaca handler:', err);
