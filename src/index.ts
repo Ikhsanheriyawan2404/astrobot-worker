@@ -46,7 +46,7 @@ app.get("/api/bot/data", async (c) => {
   }
 
   const rows = await userQueries.getAllUserPreferences(c.env.DB);
-  const motivation = "test";
+  const motivation = await generateDailyMotivation(c.env.OPENAI_API_KEY);
   await motivationQueries.saveMotivation(c.env.DB, motivation);
 
   const mapUserPreferences = (rows: any[]) => {
